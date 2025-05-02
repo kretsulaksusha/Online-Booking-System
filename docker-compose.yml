@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  mongo1:
+    image: mongo:6
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment: { ZOOKEEPER_CLIENT_PORT: 2181 }
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on: [zookeeper]
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+  hazelcast:
+    image: hazelcast/hazelcast:5
+  api-gateway:
+    build: ./api-gateway
+    ports: ['8080:8080']
+    depends_on: [inventory-service, booking-service]
+  inventory-service:
+    build: ./inventory-service
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017/inventory?replicaSet=rs0
+    ports: ['8081:8081']
+    depends_on: [mongo1]
+  booking-service:
+    build: ./booking-service
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017/bookingdb?replicaSet=rs0
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092    # Зверніть увагу на нижнє підкреслення!
+      HAZELCAST_CLUSTER_MEMBERS: hazelcast
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mongo1
+      - kafka
+      - hazelcast
