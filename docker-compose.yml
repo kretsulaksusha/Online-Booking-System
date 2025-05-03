@@ -1,30 +1,59 @@
 version: '3.8'
 services:
-  db:
+  user-db:
     image: postgres:15-alpine
+    container_name: userdb
     environment:
       POSTGRES_DB:       userdb
       POSTGRES_USER:     user
       POSTGRES_PASSWORD: password
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - user_db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  payment-db:
+    image: postgres:15-alpine
+    container_name: paymentdb
+    environment:
+      POSTGRES_DB:       paymentdb
+      POSTGRES_USER:     payment
+      POSTGRES_PASSWORD: paymentpass
+    volumes:
+      - payment_db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
 
   user-service:
     build:
       context: ./user-service
       dockerfile: Dockerfile
     depends_on:
-      - db
+      - user-db
     environment:
-      SPRING_DATASOURCE_URL:      jdbc:postgresql://db:5432/userdb
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL:        jdbc:postgresql://user-db:5432/userdb
+      SPRING_DATASOURCE_USERNAME:   user
+      SPRING_DATASOURCE_PASSWORD:   password
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
-      SPRING_FLYWAY_ENABLED:     "true"
+      SPRING_FLYWAY_ENABLED:        "true"
     ports:
       - "8080:8080"
 
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    depends_on:
+      - payment-db
+    environment:
+      SPRING_DATASOURCE_URL:        jdbc:postgresql://payment-db:5432/paymentdb
+      SPRING_DATASOURCE_USERNAME:   payment
+      SPRING_DATASOURCE_PASSWORD:   paymentpass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED:        "true"
+    ports:
+      - "8090:8080"
+
 volumes:
-  db_data:
+  user_db_data:
+  payment_db_data:
