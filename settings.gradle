@@ -11,4 +11,4 @@ plugins {
 }
 
 rootProject.name = 'Online-Booking-System'
-include('app')
+include('user-service', 'payment-service')
