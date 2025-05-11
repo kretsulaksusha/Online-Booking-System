@@ -20,8 +20,13 @@ services:
     image: hazelcast/hazelcast:5
   api-gateway:
     build: ./api-gateway
-    ports: ['8080:8080']
-    depends_on: [inventory-service, booking-service]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - inventory-service
+      - booking-service
+      - user-service
+      - payment-service
   inventory-service:
     build: ./inventory-service
     environment:
@@ -40,3 +45,57 @@ services:
       - mongo1
       - kafka
       - hazelcast
+  user-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
+    depends_on:
+      - user-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/userdb
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: "true"
+
+  payment-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: paymentdb
+      POSTGRES_USER: payment
+      POSTGRES_PASSWORD: paymentpass
+    volumes:
+      - payment_db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8080"
+    depends_on:
+      - payment-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://payment-db:5432/paymentdb
+      SPRING_DATASOURCE_USERNAME: payment
+      SPRING_DATASOURCE_PASSWORD: paymentpass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: "true"
+
+volumes:
+  user_db_data:
+  payment_db_data:
