@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /project
 
 COPY gradlew .
@@ -10,7 +10,7 @@ COPY src/ src/
 RUN chmod +x gradlew \
  && ./gradlew bootJar -x test --no-daemon
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /project/build/libs/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app/app.jar"]
