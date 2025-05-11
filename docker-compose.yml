@@ -1,59 +1,42 @@
 version: '3.8'
 services:
-  user-db:
-    image: postgres:15-alpine
-    container_name: userdb
-    environment:
-      POSTGRES_DB:       userdb
-      POSTGRES_USER:     user
-      POSTGRES_PASSWORD: password
+  mongo1:
+    image: mongo:6
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27017:27017"
     volumes:
-      - user_db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-  payment-db:
-    image: postgres:15-alpine
-    container_name: paymentdb
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment: { ZOOKEEPER_CLIENT_PORT: 2181 }
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on: [zookeeper]
     environment:
-      POSTGRES_DB:       paymentdb
-      POSTGRES_USER:     payment
-      POSTGRES_PASSWORD: paymentpass
-    volumes:
-      - payment_db_data:/var/lib/postgresql/data
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+  hazelcast:
+    image: hazelcast/hazelcast:5
+  api-gateway:
+    build: ./api-gateway
+    ports: ['8080:8080']
+    depends_on: [inventory-service, booking-service]
+  inventory-service:
+    build: ./inventory-service
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017/inventory?replicaSet=rs0
+    ports: ['8081:8081']
+    depends_on: [mongo1]
+  booking-service:
+    build: ./booking-service
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017/bookingdb?replicaSet=rs0
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092    # Зверніть увагу на нижнє підкреслення!
+      HAZELCAST_CLUSTER_MEMBERS: hazelcast
     ports:
-      - "5433:5432"
-
-  user-service:
-    build:
-      context: ./user-service
-      dockerfile: Dockerfile
+      - "8082:8082"
     depends_on:
-      - user-db
-    environment:
-      SPRING_DATASOURCE_URL:        jdbc:postgresql://user-db:5432/userdb
-      SPRING_DATASOURCE_USERNAME:   user
-      SPRING_DATASOURCE_PASSWORD:   password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
-      SPRING_FLYWAY_ENABLED:        "true"
-    ports:
-      - "8080:8080"
-
-  payment-service:
-    build:
-      context: ./payment-service
-      dockerfile: Dockerfile
-    depends_on:
-      - payment-db
-    environment:
-      SPRING_DATASOURCE_URL:        jdbc:postgresql://payment-db:5432/paymentdb
-      SPRING_DATASOURCE_USERNAME:   payment
-      SPRING_DATASOURCE_PASSWORD:   paymentpass
-      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
-      SPRING_FLYWAY_ENABLED:        "true"
-    ports:
-      - "8090:8080"
-
-volumes:
-  user_db_data:
-  payment_db_data:
+      - mongo1
+      - kafka
+      - hazelcast
