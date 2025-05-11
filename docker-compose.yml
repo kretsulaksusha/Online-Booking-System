@@ -1,50 +1,60 @@
 version: '3.8'
+
 services:
-  mongo1:
-    image: mongo:6
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  # ZooKeeper
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    environment: { ZOOKEEPER_CLIENT_PORT: 2181 }
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  # Kafka
   kafka:
     image: confluentinc/cp-kafka:latest
-    depends_on: [zookeeper]
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+
+  # Hazelcast (force x86)
   hazelcast:
     image: hazelcast/hazelcast:5
-  api-gateway:
-    build: ./api-gateway
+    platform: linux/amd64
     ports:
-      - "8080:8080"
-    depends_on:
-      - inventory-service
-      - booking-service
-      - user-service
-      - payment-service
+      - "5701:5701"
+
+  # Inventory Service (SQLite)
   inventory-service:
     build: ./inventory-service
+    ports:
+      - "8081:8081"
+    volumes:
+      - sqlite_data:/data
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017/inventory?replicaSet=rs0
-    ports: ['8081:8081']
-    depends_on: [mongo1]
+      SPRING_DATASOURCE_URL: jdbc:sqlite:/data/app.db
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.sqlite.JDBC
+
+  # Booking Service (SQLite + Kafka + Hazelcast)
   booking-service:
     build: ./booking-service
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017/bookingdb?replicaSet=rs0
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092    # Зверніть увагу на нижнє підкреслення!
-      HAZELCAST_CLUSTER_MEMBERS: hazelcast
-    ports:
-      - "8082:8082"
     depends_on:
-      - mongo1
       - kafka
       - hazelcast
+    ports:
+      - "8082:8082"
+    volumes:
+      - sqlite_data:/data
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlite:/data/app.db
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.sqlite.JDBC
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      HAZELCAST_CLUSTER_MEMBERS: hazelcast
+
+  # User Database (Postgres)
   user-db:
     image: postgres:15-alpine
     environment:
@@ -55,14 +65,16 @@ services:
       - user_db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  # User Service
   user-service:
     build:
       context: ./user-service
       dockerfile: Dockerfile
-    ports:
-      - "8083:8080"
     depends_on:
       - user-db
+    ports:
+      - "8083:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/userdb
       SPRING_DATASOURCE_USERNAME: user
@@ -70,6 +82,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SPRING_FLYWAY_ENABLED: "true"
 
+  # Payment Database (Postgres)
   payment-db:
     image: postgres:15-alpine
     environment:
@@ -81,14 +94,15 @@ services:
     ports:
       - "5433:5432"
 
+  # Payment Service
   payment-service:
     build:
       context: ./payment-service
       dockerfile: Dockerfile
-    ports:
-      - "8090:8080"
     depends_on:
       - payment-db
+    ports:
+      - "8090:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://payment-db:5432/paymentdb
       SPRING_DATASOURCE_USERNAME: payment
@@ -96,6 +110,18 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SPRING_FLYWAY_ENABLED: "true"
 
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    depends_on:
+      - inventory-service
+      - booking-service
+      - user-service
+      - payment-service
+    ports:
+      - "8080:8080"
+
 volumes:
+  sqlite_data:
   user_db_data:
   payment_db_data:
