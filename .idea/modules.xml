@@ -2,20 +2,20 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Online-Booking-System.iml" filepath="$PROJECT_DIR$/.idea/modules/Online-Booking-System.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Online-Booking-System.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Online-Booking-System.app.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Online-Booking-System.app.test.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Online-Booking-System.app.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Online-Booking-System.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Online-Booking-System.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment/Online-Booking-System.payment.iml" filepath="$PROJECT_DIR$/.idea/modules/payment/Online-Booking-System.payment.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment-service/Online-Booking-System.payment-service.iml" filepath="$PROJECT_DIR$/.idea/modules/payment-service/Online-Booking-System.payment-service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment-service/Online-Booking-System.payment-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/payment-service/Online-Booking-System.payment-service.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment-service/Online-Booking-System.payment-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/payment-service/Online-Booking-System.payment-service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment/Online-Booking-System.payment.main.iml" filepath="$PROJECT_DIR$/.idea/modules/payment/Online-Booking-System.payment.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment/Online-Booking-System.payment.test.iml" filepath="$PROJECT_DIR$/.idea/modules/payment/Online-Booking-System.payment.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Online-Booking-System.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Online-Booking-System.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service/Online-Booking-System.user-service.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service/Online-Booking-System.user-service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service/Online-Booking-System.user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service/Online-Booking-System.user-service.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service/Online-Booking-System.user-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service/Online-Booking-System.user-service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/online-booking-system.iml" filepath="$PROJECT_DIR$/.idea/modules/online-booking-system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment-service/online-booking-system.payment-service.iml" filepath="$PROJECT_DIR$/.idea/modules/payment-service/online-booking-system.payment-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment-service/online-booking-system.payment-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/payment-service/online-booking-system.payment-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/payment-service/online-booking-system.payment-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/payment-service/online-booking-system.payment-service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service/online-booking-system.user-service.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service/online-booking-system.user-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service/online-booking-system.user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service/online-booking-system.user-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service/online-booking-system.user-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service/online-booking-system.user-service.test.iml" />
     </modules>
   </component>
 </project>
