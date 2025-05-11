@@ -1,26 +1,26 @@
 package com.example.booking.controller;
 
-import com.example.booking.model.Booking;
-import com.example.booking.model.BookingRequest;
-import com.example.booking.repository.BookingRepository;
 import com.example.booking.event.BookingEvents;
+import com.example.booking.model.Booking;
+import com.example.booking.controller.BookingRequest;
+import com.example.booking.repository.BookingRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/bookings")
 public class BookingController {
-
     private final BookingRepository repo;
     private final KafkaTemplate<String, Object> kafka;
 
     public BookingController(BookingRepository repo,
                              KafkaTemplate<String, Object> kafka) {
-        this.repo = repo;
+        this.repo  = repo;
         this.kafka = kafka;
     }
 
@@ -29,20 +29,13 @@ public class BookingController {
         Booking b = new Booking();
         b.setItemId(req.getItemId());
         b.setQuantity(req.getQuantity());
-        // Згенеруємо UUID, якщо не заданий
-        if (b.getId() == null || b.getId().isBlank()) {
-            b.setId(UUID.randomUUID().toString());
-        }
+        // генеруємо id
+        b.setId(UUID.randomUUID().toString());
         b.setCreatedAt(Instant.now());
 
         Booking saved = repo.save(b);
-
-        // Відправимо подію в Kafka
-        kafka.send(
-            BookingEvents.REQUESTED,
-            new BookingEvents.BookingRequested(saved.getId(), saved.getItemId())
-        );
-
+        kafka.send(BookingEvents.REQUESTED,
+                   new BookingEvents.BookingRequested(saved.getId(), saved.getItemId()));
         return ResponseEntity.ok(saved);
     }
 
@@ -54,7 +47,7 @@ public class BookingController {
     }
 
     @GetMapping
-    public Iterable<Booking> all() {
+    public List<Booking> all() {
         return repo.findAll();
     }
 }
