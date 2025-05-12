@@ -2,6 +2,41 @@
 
 **Team**: Anastasiia Pelekh, Ksenia Kretsula, Andrii Ahitoliev.
 
+Booking & Inventory:
+```shell
+rm -rf gradle
+gradle wrapper --gradle-version 8.2
+./gradlew clean build
+docker-compose up --build -d mongo1 zookeeper kafka
+docker-compose exec mongo1 mongosh --eval 'rs.initiate({_id:"rs0",members:[{_id:0,host:"mongo1:27017"}]})'
+docker-compose up --build -d
+# check status
+docker-compose ps
+docker-compose logs -f
+
+./smoke-test.sh
+
+export $(cat .env | xargs) 
+
+docker-compose down
+```
+
+Authentification:
+```shell
+rm -rf gradle
+gradle wrapper --gradle-version 8.2
+./gradlew clean build # or use UI in IntelliJ IDEA to build project
+docker-compose up --build
+```
+
+In another terminal run:
+```shell
+./smoke-test-auth.sh
+
+# Stop the system
+docker-compose down
+```
+
 ## System Overview
 
 <table>
