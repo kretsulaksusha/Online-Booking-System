@@ -1,2 +1,2 @@
 rootProject.name = 'online-booking-system'
-include 'api-gateway', 'inventory-service', 'booking-service', 'user-service', 'payment-service'
+include 'api-gateway', 'inventory-service', 'booking-service', 'user-service', 'payment-service', 'authentication'

@@ -121,7 +121,28 @@ services:
     ports:
       - "8080:8080"
 
+  # Authentification Database (Mongo)
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    command: [ "mongod", "--replSet", "rs0", "--bind_ip_all" ]
+    volumes:
+      - mongo_data:/data/db
+
+  # Authentification Service
+  auth-service:
+    build: ./authentication
+    ports:
+      - "8085:8085"
+    depends_on:
+      - mongo
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/authentication?replicaSet=rs0
+
 volumes:
   sqlite_data:
   user_db_data:
   payment_db_data:
+  mongo_data:
