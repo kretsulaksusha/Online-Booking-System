@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre AS build
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /project
 
 COPY gradlew .

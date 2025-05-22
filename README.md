@@ -2,40 +2,30 @@
 
 **Team**: Anastasiia Pelekh, Ksenia Kretsula, Andrii Ahitoliev.
 
-**Java Version**: 17
+Make sure the Java version is 17.
 
-> Make sure Java 17 is installed and that the `JAVA_HOME` environment variable is correctly set to its installation path.
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
 
-## Quick Start
-
-### Build and Run
-
-```bash
+```shell
 rm -rf gradle
 gradle wrapper --gradle-version 8.2
 ./gradlew clean build --stacktrace --info
 ```
 
-### Smoke Tests
-
-```bash
+```shell
 ./smoke-test.sh
 ./smoke-test-auth.sh
 ```
 
----
-
-## Debug Endpoints
+For debug:
 
 List all users:
-
-```bash
+```shell
 curl GET http://localhost:8085/auth/list-users
 ```
 
 Delete all users:
-
-```bash
+```shell
 curl -X DELETE http://localhost:8085/auth/delete-all-users
 ```
 
