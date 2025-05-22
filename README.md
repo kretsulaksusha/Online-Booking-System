@@ -2,39 +2,41 @@
 
 **Team**: Anastasiia Pelekh, Ksenia Kretsula, Andrii Ahitoliev.
 
-Booking & Inventory:
-```shell
+**Java Version**: 17
+
+> Make sure Java 17 is installed and that the `JAVA_HOME` environment variable is correctly set to its installation path.
+
+## Quick Start
+
+### Build and Run
+
+```bash
 rm -rf gradle
 gradle wrapper --gradle-version 8.2
-./gradlew clean build
-docker-compose up --build -d mongo1 zookeeper kafka
-docker-compose exec mongo1 mongosh --eval 'rs.initiate({_id:"rs0",members:[{_id:0,host:"mongo1:27017"}]})'
-docker-compose up --build -d
-# check status
-docker-compose ps
-docker-compose logs -f
+./gradlew clean build --stacktrace --info
+```
 
+### Smoke Tests
+
+```bash
 ./smoke-test.sh
-
-export $(cat .env | xargs) 
-
-docker-compose down
-```
-
-Authentification:
-```shell
-rm -rf gradle
-gradle wrapper --gradle-version 8.2
-./gradlew clean build # or use UI in IntelliJ IDEA to build project
-docker-compose up --build
-```
-
-In another terminal run:
-```shell
 ./smoke-test-auth.sh
+```
 
-# Stop the system
-docker-compose down
+---
+
+## Debug Endpoints
+
+List all users:
+
+```bash
+curl GET http://localhost:8085/auth/list-users
+```
+
+Delete all users:
+
+```bash
+curl -X DELETE http://localhost:8085/auth/delete-all-users
 ```
 
 ## System Overview
@@ -81,18 +83,18 @@ Key architectural features:
 
 ## Technical Stack
 
-| Component           | Technology                          |
-|---------------------|-------------------------------------|
-| API Gateway         | Spring Cloud Gateway               |
-| Services Framework  | Spring Boot (Java)                 |
-| Auth                | Spring Security + JWT              |
-| Messaging           | Apache Kafka                       |
-| Databases           | PostgreSQL (SQL), MongoDB (NoSQL)  |
-| Caching             | Redis                              |
-| Distributed Tracing | OpenTelemetry + Jaeger             |
-| Monitoring          | Prometheus + Grafana               |
-| CI/CD               | GitHub Actions                     |
-| Containerization    | Docker + Kubernetes                |
+| Component           | Technology                        |
+|---------------------|-----------------------------------|
+| API Gateway         | Spring Cloud Gateway              |
+| Services Framework  | Spring Boot (Java)                |
+| Auth                | Spring Security + JWT             |
+| Messaging           | Apache Kafka                      |
+| Databases           | PostgreSQL (SQL), MongoDB (NoSQL) |
+| Caching             | Redis                             |
+| Distributed Tracing | OpenTelemetry + Jaeger            |
+| Monitoring          | Prometheus + Grafana              |
+| CI/CD               | GitHub Actions                    |
+| Containerization    | Docker + Kubernetes               |
 
 ## Key Architectural Patterns
 
@@ -124,43 +126,6 @@ Key architectural features:
 - View booking analytics
 - Manage user accounts
 
-## Development Roadmap
-
-### Sprint 1: Foundation
-
-- Set up GitHub repository and CI/CD pipeline
-- Implement Auth Service with JWT
-- Configure API Gateway
-- Dockerize development environment
-
-### Sprint 2: Core Services
-
-- Develop Inventory Service with MongoDB
-- Implement Booking Service with Kafka integration
-- Set up Redis caching layer
-- Basic UI for browsing inventory
-
-### Sprint 3: Transactions
-
-- Implement Payment Service
-- Develop Notification Service
-- Implement Saga pattern for booking flow
-- Enhance UI with booking functionality
-
-### Sprint 4: Resilience
-
-- Add Circuit Breaker to Inventory Service
-- Implement distributed tracing
-- Set up service replication
-- Comprehensive integration testing
-
-### Sprint 5: Finalization
-
-- Performance optimization
-- Security hardening
-- Documentation completion
-- Demo preparation
-
 ## Quality Attributes
 
 1. **Reliability**: 99.9% uptime target with graceful degradation
@@ -174,7 +139,7 @@ Key architectural features:
 ### Prerequisites
 
 - Docker 20.10+
-- Java 17+
+- Java 17
 - Kafka 3.0+
 - PostgreSQL 14+
 - MongoDB 5.0+
@@ -198,7 +163,7 @@ TODO
 
 ### End-to-End Testing
 
-- Test complete booking flow
+- Test the complete booking flow
 - Verify payment processing
 - Check notification delivery
 

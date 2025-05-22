@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 8085
 
 spring:
   data:
@@ -7,3 +7,7 @@ spring:
       uri: mongodb://localhost:27017/authentication
   application:
     name: auth-service
+
+logging:
+  level:
+    obs.authentication: DEBUG
