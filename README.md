@@ -21,7 +21,7 @@ For debug:
 
 List all users:
 ```shell
-curl GET http://localhost:8085/auth/list-users
+curl -X GET http://localhost:8085/auth/list-users
 ```
 
 Delete all users:
