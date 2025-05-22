@@ -2,9 +2,11 @@
 
 **Team**: Anastasiia Pelekh, Ksenia Kretsula, Andrii Ahitoliev.
 
-Make sure the Java version is 17.
+> Make sure Java 17 is installed and that the `JAVA_HOME` environment variable is correctly set to its installation path.
 
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
+## Quick Start
+
+### Build and Run
 
 ```shell
 rm -rf gradle
@@ -12,12 +14,14 @@ gradle wrapper --gradle-version 8.2
 ./gradlew clean build --stacktrace --info
 ```
 
+### Smoke Tests
+
 ```shell
 ./smoke-test.sh
 ./smoke-test-auth.sh
 ```
 
-For debug:
+## Debug Endpoints
 
 List all users:
 ```shell
