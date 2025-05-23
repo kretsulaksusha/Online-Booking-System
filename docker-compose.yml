@@ -141,6 +141,13 @@ services:
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/authentication?replicaSet=rs0
 
+  booking-ui:
+    build:
+      context: client/booking-ui
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
 volumes:
   sqlite_data:
   user_db_data:
