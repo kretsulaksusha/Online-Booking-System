@@ -4,7 +4,7 @@ import Home from './pages/Home.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
-import Booking from './pages/Booking.jsx';
+import Booking from './pages/Bookings.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 const router = createBrowserRouter([

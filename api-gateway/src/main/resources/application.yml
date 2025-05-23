@@ -2,17 +2,20 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: api-gateway
+
   cloud:
     gateway:
       routes:
         - id: auth-service
-          uri: http://authentication:8080
+          uri: http://auth-service:8085
           predicates:
             - Path=/auth/**
         - id: booking-service
           uri: http://booking-service:8082
           predicates:
-            - Path=/booking/**
+            - Path=/bookings/**
         - id: inventory-service
           uri: http://inventory-service:8081
           predicates:
@@ -26,6 +29,26 @@ spring:
           predicates:
             - Path=/users/**
 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
+
+eureka:
+  client:
+    enabled: false

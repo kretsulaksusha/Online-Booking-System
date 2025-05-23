@@ -29,7 +29,6 @@ public class InventoryController {
         return repo.save(item);
     }
 
-
     @GetMapping("/{id}")
     public InventoryItem get(@PathVariable String id) {
         return repo.findById(id).orElseThrow();

@@ -138,10 +138,6 @@ Key architectural features:
 - PostgreSQL 14+
 - MongoDB 5.0+
 
-### Local Development
-
-TODO
-
 ## Testing Strategy
 
 ### Unit Testing

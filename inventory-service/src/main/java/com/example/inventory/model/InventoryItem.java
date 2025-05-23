@@ -3,6 +3,7 @@ package com.example.inventory.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.UUID;
 
 @Entity
 @Table(name = "inventory_item")
@@ -16,7 +17,7 @@ public class InventoryItem {
     public InventoryItem() {}
 
     public InventoryItem(String type, int availableCount, double price) {
-        this.id = id;
+        this.id = UUID.randomUUID().toString();;
         this.type = type;
         this.availableCount = availableCount;
         this.price = price;

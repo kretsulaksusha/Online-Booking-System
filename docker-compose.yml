@@ -118,6 +118,7 @@ services:
       - booking-service
       - user-service
       - payment-service
+      - auth-service
     ports:
       - "8080:8080"
 
